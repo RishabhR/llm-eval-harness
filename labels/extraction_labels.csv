@@ -1,0 +1,25 @@
+filing,field_id,expected_value,notes
+ADBE_2025,capex,179,Property & Equipment
+ADBE_2025,buybacks,11281,Repurchases of common stock
+ADBE_2025,lease_and_offbs_obligations,"{""operating_lease_liability"": 485, ""purchase_obligations"": 6820}",operating_lease_liability and purchase_obligations include both current and non-current liabilities
+ADBE_2025,named_operational_metrics,"{""net_revenue_retention"": 118, ""annual_recurring_revenue"": 2520, ""gross_margin_subscription"": 91.15, ""remaining_performance_obligations"": 2252}",
+CRM_2026,capex,594,Capital Expenditures
+CRM_2026,buybacks,12596,Repurchases of common stock
+CRM_2026,lease_and_offbs_obligations,"{""operating_lease_liability"": 548, ""purchase_obligations"": null}",operating_lease_liability and purchase_obligations include both current and non-current liabilities
+CRM_2026,named_operational_metrics,"{""net_revenue_retention"": null, ""annual_recurring_revenue"": null, ""gross_margin_subscription"": 82.74, ""remaining_performance_obligations"": 7240}",
+MSFT_2026,capex,115948,Additions to property and equipment
+MSFT_2026,buybacks,22271,Repurchases of common stock
+MSFT_2026,lease_and_offbs_obligations,"{""operating_lease_liability"": 16532, ""purchase_obligations"": 194060}",operating_lease_liability and purchase_obligations include both current and non-current liabilities
+MSFT_2026,named_operational_metrics,"{""net_revenue_retention"": null, ""annual_recurring_revenue"": null, ""gross_margin_subscription"": null, ""remaining_performance_obligations"": 678000}",
+NOW_2026,capex,868,Purchases of property and equipment
+NOW_2026,buybacks,1840,Repurchases of common stock
+NOW_2026,lease_and_offbs_obligations,"{""operating_lease_liability"": 912, ""purchase_obligations"": 7946}",operating_lease_liability and purchase_obligations include both current and non-current liabilities
+NOW_2026,named_operational_metrics,"{""net_revenue_retention"": null, ""annual_recurring_revenue"": null, ""gross_margin_subscription"": 80, ""remaining_performance_obligations"": 28200}",
+TEAM_2026,capex,34,Purchases of property and equipment
+TEAM_2026,buybacks,1800,Repurchases of Class A Common Stock
+TEAM_2026,lease_and_offbs_obligations,"{""operating_lease_liability"": 243, ""purchase_obligations"": 4695}",operating_lease_liability and purchase_obligations include both current and non-current liabilities
+TEAM_2026,named_operational_metrics,"{""net_revenue_retention"": null, ""annual_recurring_revenue"": 6606, ""gross_margin_subscription"": null, ""remaining_performance_obligations"": 4800}",
+WDAY_2026,capex,162,Capital expenditures
+WDAY_2026,buybacks,2895,Repurchases of common stock
+WDAY_2026,lease_and_offbs_obligations,"{""operating_lease_liability"": 834, ""purchase_obligations"": 1566}",operating_lease_liability and purchase_obligations include both current and non-current liabilities
+WDAY_2026,named_operational_metrics,"{""net_revenue_retention"": null, ""annual_recurring_revenue"": null, ""gross_margin_subscription"": 82.66, ""remaining_performance_obligations"": 28100}",

@@ -1,0 +1,61 @@
+# Field definitions for the extraction and analysis halves of the eval.
+# See README.md for how each value_type is scored.
+
+industry: software_saas
+
+# Operator-specified operational metrics for the chosen industry. Edit this list
+# before running the eval; `named_operational_metrics` is graded per-key against
+# this exact list of names, so keep names stable across a run's lifetime.
+operational_metrics:
+  - net_revenue_retention
+  - annual_recurring_revenue
+  - gross_margin_subscription
+  - remaining_performance_obligations
+
+extraction_fields:
+  - id: capex
+    name: "Capital expenditures, most recent fiscal year"
+    where: "Cash flow statement, investing activities"
+    value_type: number
+    unit: usd_millions
+
+  - id: buybacks
+    name: "Share repurchases, most recent fiscal year"
+    where: "Cash flow statement, financing activities, or equity note"
+    value_type: number
+    unit: usd_millions
+    zero_if_none: true
+
+  - id: lease_and_offbs_obligations
+    name: "Operating lease liabilities plus disclosed purchase/other contractual obligations"
+    where: "Lease note, contractual obligations table"
+    value_type: dict_numeric
+    keys:
+      - operating_lease_liability
+      - purchase_obligations
+    unit: usd_millions
+
+  - id: named_operational_metrics
+    name: "Operator-specified operational metrics"
+    where: "MD&A"
+    value_type: dict_numeric
+    keys: []  # populated from operational_metrics above at load time
+
+analysis_fields:
+  - id: business_model_risks
+    name: "Risks to the business model"
+    asks_for: >
+      The 3 most material risks to the company's ability to sustain its current
+      business model, each with a direct citation to filing text.
+
+  - id: competitive_threats
+    name: "Competitive threats"
+    asks_for: >
+      The 3 most significant competitive threats named or implied in the filing,
+      each with a direct citation.
+
+  - id: profitability_quality
+    name: "Quality of reported profitability"
+    asks_for: >
+      Items that cause reported earnings to differ from underlying economics
+      (e.g. SBC, one-off items, capitalisation choices), each with a direct citation.

@@ -1,0 +1,32 @@
+You are analyzing a 10-K filing to support a human analyst. Read only the
+filing text provided below. Do not use outside knowledge of the company.
+
+Question: <<FIELD_NAME>>
+<<ASKS_FOR>>
+
+Rules:
+- Provide exactly 3 claims, ranked most important first.
+- For every claim, include a verbatim quotation from the filing text below
+  that supports it, in a "citation" field. Do not paraphrase the citation —
+  copy the exact text as it appears in the filing.
+- If you cannot find filing text that supports a genuinely material point,
+  say so explicitly rather than stretching a weak or irrelevant citation to
+  fit. It is better to return fewer than 3 well-supported claims than to
+  fabricate a citation.
+- Do not draw conclusions the filing text does not support.
+
+Respond with strict JSON only, no markdown code fences, no commentary, in
+this shape:
+
+[
+  {"claim": "...", "citation": "..."},
+  {"claim": "...", "citation": "..."},
+  {"claim": "...", "citation": "..."}
+]
+
+Filing text:
+"""
+<<FILING_TEXT>>
+"""
+
+Respond with JSON only.

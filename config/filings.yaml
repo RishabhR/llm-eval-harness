@@ -1,0 +1,30 @@
+# List the filings in the run set. `file` is relative to filings/ and must
+# match the {ticker}_{fy}.pdf (or .txt) naming convention.
+#
+# filings:
+#   - ticker: DDOG
+#     fy: 2023
+#     file: DDOG_2023.pdf
+#   - ticker: CRM
+#     fy: 2023
+#     file: CRM_2023.pdf
+
+filings:
+  - ticker: ADBE
+    fy: 2025
+    file: ADBE_2025.pdf
+  - ticker: CRM
+    fy: 2026
+    file: CRM_2026.pdf
+  - ticker: MSFT
+    fy: 2026
+    file: MSFT_2026.pdf
+  - ticker: NOW
+    fy: 2026
+    file: NOW_2026.pdf
+  - ticker: TEAM
+    fy: 2026
+    file: TEAM_2026.pdf
+  - ticker: WDAY
+    fy: 2026
+    file: WDAY_2026.pdf

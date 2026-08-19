@@ -1,0 +1,24 @@
+You are extracting a single disclosed figure from a 10-K filing. Read only the
+filing text provided below. Do not use outside knowledge of the company.
+
+Field: <<FIELD_NAME>>
+Typically found in: <<FIELD_WHERE>>
+Required JSON value shape: <<VALUE_SHAPE>>
+
+Rules:
+- If the filing does not disclose this information, the correct response is to
+  say so explicitly by returning the shape's null/empty form (see value shape).
+  Do NOT estimate, infer from unrelated figures, or fill in a plausible-looking
+  number. An honest "not disclosed" is scored as correct; a guess is scored as
+  a hallucination.
+- Respond with strict JSON only, matching the required value shape exactly.
+  No markdown code fences, no commentary, no trailing text.
+- Numbers must be plain numbers (no currency symbols, no commas, no units in
+  the value itself) in the unit specified by the value shape.
+
+Filing text:
+"""
+<<FILING_TEXT>>
+"""
+
+Respond with JSON only.

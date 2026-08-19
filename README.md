@@ -3,7 +3,7 @@
 A small local harness for measuring how well an LLM does two different kinds
 of task over 10-K filings:
 
-- **Extraction** (5 fields, 50 cases) — figures with a right answer, scored
+- **Extraction** (8 fields per filing) — figures with a right answer, scored
   on accuracy against a hand-authored answer key.
 - **Analysis** (3 fields, 30 cases, ~90 claims) — judgments with no single
   right answer, scored on *grounding*: is every claim traceable to filing text?

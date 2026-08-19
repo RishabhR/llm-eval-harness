@@ -57,14 +57,27 @@ def load_run_cases(run_dir: Path) -> dict[tuple[str, str], dict]:
     return chosen
 
 
+def _unwrap_numeric(actual):
+    """The model sometimes wraps a bare numeric answer in a single-key JSON
+    object (e.g. {"value": 179}) instead of the plain number the prompt asks
+    for -- the wrapper key name varies and isn't predictable. Unwrap one
+    level rather than scoring it as a shape mismatch."""
+    if isinstance(actual, dict) and len(actual) == 1:
+        return next(iter(actual.values()))
+    return actual
+
+
 def numeric_verdict(expected, actual):
     """Returns (verdict, error_magnitude) for a single numeric field/key."""
+    actual = _unwrap_numeric(actual)
     if expected is None:
         if actual is None:
             return "CORRECT", None
         return "HALLUCINATED", None
     if actual is None:
         return "MISSED", None
+    if not isinstance(actual, (int, float)):
+        return "PARSE_ERROR", None
     if expected == 0:
         return ("CORRECT" if actual == 0 else "WRONG"), (actual - expected)
     rel_err = (actual - expected) / expected

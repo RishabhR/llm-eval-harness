@@ -52,6 +52,10 @@ def load_csv_if_exists(path: Path) -> pd.DataFrame | None:
 def estimate_cost(raw_df: pd.DataFrame) -> str:
     if raw_df.empty:
         return "n/a"
+    # Pricing is optional: without it the report still builds and simply
+    # reports no cost estimate, rather than failing the whole run.
+    if not PRICING_PATH.exists():
+        return "n/a (no config/pricing.yaml)"
     with open(PRICING_PATH) as f:
         pricing = (yaml.safe_load(f) or {}).get("models", {})
 

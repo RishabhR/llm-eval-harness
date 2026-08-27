@@ -34,12 +34,39 @@ extraction_fields:
       - operating_lease_liability
       - purchase_obligations
     unit: usd_millions
+    # `guidance` is injected into prompts that contain <<FIELD_GUIDANCE>>.
+    # extraction_v1.txt has no such placeholder, so v1 is unaffected.
+    guidance: |
+      - operating_lease_liability: the total operating lease liability. Balance
+        sheets usually split this into a current and a non-current portion --
+        sum both. Do not report only one portion. Exclude finance lease
+        liabilities.
+      - purchase_obligations: all disclosed purchase and other contractual
+        obligations across every future period, not just the portion due within
+        the next twelve months. If a maturity table breaks obligations out by
+        year with a "thereafter" row, sum the entire table.
 
   - id: named_operational_metrics
     name: "Operator-specified operational metrics"
     where: "MD&A"
     value_type: dict_numeric
     keys: []  # populated from operational_metrics above at load time
+    # These metrics do not share a unit, so the field has no `unit:` key and
+    # the per-metric units below are the authoritative ones.
+    guidance: |
+      These metrics are in different units. Use the unit given per metric below.
+      - net_revenue_retention: percentage. 118 means 118%.
+      - annual_recurring_revenue: USD millions.
+      - gross_margin_subscription: subscription gross margin as a percentage;
+        82.7 means 82.7%. If the filing does not state it directly, compute it
+        from the consolidated statements of income as
+        (subscription revenue - cost of subscription revenue) / subscription revenue.
+        Use the subscription (or subscription-and-support) revenue line and its
+        matching cost-of-revenue line -- not total revenue and not total cost of
+        revenue. A value computed this way from disclosed line items counts as
+        disclosed, so report it rather than null.
+      - remaining_performance_obligations: USD millions. Report total RPO
+        (current plus non-current) unless the filing discloses only one.
 
 analysis_fields:
   - id: business_model_risks

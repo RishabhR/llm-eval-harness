@@ -45,11 +45,22 @@ def strip_json_fences(text: str) -> str:
     return _FENCE_RE.sub("", text.strip()).strip()
 
 
+def _guidance_block(field: dict) -> str:
+    """Render a field's optional `guidance` from fields.yaml. Prompt templates
+    opt in by containing <<FIELD_GUIDANCE>>; templates without the placeholder
+    (extraction_v1.txt) are left byte-identical, so their cache keys hold."""
+    guidance = (field.get("guidance") or "").strip()
+    if not guidance:
+        return ""
+    return f"\nGuidance for this field:\n{guidance}\n"
+
+
 def build_extraction_prompt(template: str, field: dict, filing_text: str) -> str:
     return (
         template.replace("<<FIELD_NAME>>", field["name"])
         .replace("<<FIELD_WHERE>>", field.get("where", ""))
         .replace("<<VALUE_SHAPE>>", value_shape_description(field))
+        .replace("<<FIELD_GUIDANCE>>", _guidance_block(field))
         .replace("<<FILING_TEXT>>", filing_text)
     )
 

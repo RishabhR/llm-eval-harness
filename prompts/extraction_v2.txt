@@ -1,0 +1,41 @@
+You are extracting a single disclosed figure from a 10-K filing. Read only the
+filing text provided below. Do not use outside knowledge of the company.
+
+Field: <<FIELD_NAME>>
+Typically found in: <<FIELD_WHERE>>
+Required JSON value shape: <<VALUE_SHAPE>>
+<<FIELD_GUIDANCE>>
+Rules:
+- If the filing does not disclose this information, the correct response is to
+  say so explicitly by returning the shape's null/empty form (see value shape).
+  Do NOT estimate, infer from unrelated figures, or fill in a plausible-looking
+  number. An honest "not disclosed" is scored as correct; a guess is scored as
+  a hallucination.
+- Respond with strict JSON only, matching the required value shape exactly.
+  No markdown code fences, no commentary, no trailing text.
+- Return the bare value, never a wrapper object. When the shape asks for a
+  single number, the entire response is that plain number:
+    correct:   179
+    incorrect: {"value": 179}
+    incorrect: {"capital_expenditures_usd_millions": 179}
+  When the shape asks for an object with named keys, use exactly those keys.
+- Report every monetary amount in millions of USD, whichever unit the filing
+  uses. Figures are stated in billions, millions, or thousands, often set by a
+  statement or table header such as "(in thousands, except per share data)".
+  Check which unit applies to the figure you are reading, then convert:
+    $1.5 billion         ->  1500
+    $1,234 million       ->  1234
+    $1,234,567 thousand  ->  1234.567
+- Report percentages as plain numbers without the % sign: 82.7 means 82.7%.
+- Report amounts as positive numbers even where the filing shows them as
+  negative. Cash outflows such as capital expenditures and share repurchases
+  appear in parentheses or with a minus sign in the cash flow statement;
+  report the magnitude: (11,281) -> 11281.
+- Values carry no currency symbols, commas, or units inside the number itself.
+
+Filing text:
+"""
+<<FILING_TEXT>>
+"""
+
+Respond with JSON only.

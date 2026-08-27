@@ -1,4 +1,15 @@
 anthropic
-pypdf
 pyyaml
 pandas
+
+# pypdf is pinned deliberately. Extracted filing text is embedded in the prompt,
+# and the prompt is part of the .cache/ key (see src/cache.py), so a pypdf
+# version bump that changes text extraction by even one character silently
+# orphans the whole cache -- a re-run then costs a full set of API calls
+# instead of being free. Bump this pin only when you are willing to re-run.
+pypdf==6.16.2
+
+# Required by pypdf to read AES-encrypted PDFs. At least one filing in the
+# current run set is encrypted; without this, load_filing() raises
+# pypdf.errors.DependencyError instead of returning text.
+cryptography

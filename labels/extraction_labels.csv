@@ -1,12 +1,12 @@
 filing,field_id,expected_value,notes
 ADBE_2025,capex,179,Property & Equipment
 ADBE_2025,buybacks,11281,Repurchases of common stock
-ADBE_2025,lease_and_offbs_obligations,"{""operating_lease_liability"": 485, ""purchase_obligations"": 6820}",operating_lease_liability and purchase_obligations include both current and non-current liabilities
-ADBE_2025,named_operational_metrics,"{""net_revenue_retention"": null, ""annual_recurring_revenue"": 2520, ""gross_margin_subscription"": 91.15, ""remaining_performance_obligations"": 2252}",
+ADBE_2025,lease_and_offbs_obligations,"{""operating_lease_liability"": 438, ""purchase_obligations"": 6820}",operating_lease_liability and purchase_obligations include both current and non-current liabilities; oll = balance sheet current 77 + non-current 361
+ADBE_2025,named_operational_metrics,"{""net_revenue_retention"": null, ""annual_recurring_revenue"": 25200, ""gross_margin_subscription"": 91.15, ""remaining_performance_obligations"": 22520}",arr = Total Adobe ARR $25.20B (not Digital Media ARR $19.20B); rpo = $22.52B
 CRM_2026,capex,594,Capital Expenditures
 CRM_2026,buybacks,12596,Repurchases of common stock
-CRM_2026,lease_and_offbs_obligations,"{""operating_lease_liability"": 2737, ""purchase_obligations"": null}",operating_lease_liability and purchase_obligations include both current and non-current liabilities
-CRM_2026,named_operational_metrics,"{""net_revenue_retention"": null, ""annual_recurring_revenue"": null, ""gross_margin_subscription"": 82.74, ""remaining_performance_obligations"": 7240}",
+CRM_2026,lease_and_offbs_obligations,"{""operating_lease_liability"": 2737, ""purchase_obligations"": 16700}",operating_lease_liability and purchase_obligations include both current and non-current liabilities; po = other contractual commitments $16.7B ($3.7B due next 12 months + $13.0B thereafter)
+CRM_2026,named_operational_metrics,"{""net_revenue_retention"": null, ""annual_recurring_revenue"": null, ""gross_margin_subscription"": 82.74, ""remaining_performance_obligations"": 72400}",rpo = total remaining performance obligation $72.4B (current portion $35.1B)
 MSFT_2026,capex,115948,Additions to property and equipment
 MSFT_2026,buybacks,22271,Repurchases of common stock
 MSFT_2026,lease_and_offbs_obligations,"{""operating_lease_liability"": 21925, ""purchase_obligations"": 194060}",operating_lease_liability and purchase_obligations include both current and non-current liabilities

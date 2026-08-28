@@ -87,7 +87,10 @@ in `.cache/` (gitignored) — re-running is cheap and safe.
 - `PARSE_ERROR` — the model's response wasn't valid JSON. `LOAD_ERROR` — the filing file was missing.
 - `precision` / `recall` (customer_concentration rows only) — kept separate deliberately: a model that invents a customer and a model that misses one are different failure modes and averaging them together would hide that.
 
-**Analysis** (`analysis_scores.csv`, from the hand-graded worksheet):
+**Analysis** (`analysis_scores.csv`, from the hand-graded worksheet). Grade
+against [`labels/analysis_rubric.md`](labels/analysis_rubric.md) — these are
+judgment calls, and without a written rule the threshold drifts within a single
+grading pass, which makes `support_rate` an artifact rather than a measurement:
 - `citation_validity_rate` — fraction of claims whose quoted text is actually found in the filing (this part is pre-checked automatically by `--emit` via substring search; you can override it if the model paraphrased instead of quoting).
 - `support_rate` — fraction of claims where the citation, once found, actually supports the claim made. This is the headline analysis number, analogous to extraction accuracy.
 - `materiality_rate` — fraction of claims you judged substantive rather than filler.

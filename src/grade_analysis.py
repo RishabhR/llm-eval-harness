@@ -55,6 +55,25 @@ def _normalize_ws(s: str) -> str:
     return re.sub(r"\s+", " ", s).strip()
 
 
+def _normalize_for_match(s: str) -> str:
+    """Normalize both sides of the citation substring check.
+
+    The check answers "does this text appear in the filing", and two
+    artifacts made it answer "no" for citations that were in fact faithful:
+
+    - Quoting mid-sentence capitalizes the first letter ("we expect" quoted
+      as "We expect"), which is ordinary practice, not a fabrication.
+    - PDF extraction breaks words across lines as "non- GAAP"; a model that
+      writes "non-GAAP" is reproducing the filing correctly.
+
+    Both are semantically neutral and applied to filing and citation alike,
+    so this cannot turn an invented citation into a match -- it only stops
+    fabrication_count from counting real quotes.
+    """
+    s = _normalize_ws(s).lower()
+    return re.sub(r"(\w)-\s+(\w)", r"\1-\2", s)
+
+
 def _filing_text_cache(filings: list[dict]) -> dict[str, str]:
     from src.config import filing_id
 
@@ -103,11 +122,11 @@ def emit(run_dir: Path) -> Path:
             })
             continue
 
-        filing_text_norm = _normalize_ws(texts.get(fid, ""))
+        filing_text_norm = _normalize_for_match(texts.get(fid, ""))
         for i, claim in enumerate(claims):
             claim_text = claim.get("claim", "") if isinstance(claim, dict) else ""
             cited_text = claim.get("citation", "") if isinstance(claim, dict) else ""
-            found = bool(cited_text) and _normalize_ws(cited_text) in filing_text_norm
+            found = bool(cited_text) and _normalize_for_match(cited_text) in filing_text_norm
             rows.append({
                 "filing": fid, "field": field_id, "claim_index": i,
                 "claim_text": claim_text, "cited_text": cited_text,

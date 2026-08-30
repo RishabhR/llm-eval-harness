@@ -55,6 +55,20 @@ def _normalize_ws(s: str) -> str:
     return re.sub(r"\s+", " ", s).strip()
 
 
+# Filings use typographic quotes and dashes; a model reproducing a passage
+# routinely writes the ASCII equivalents. Folding them is semantically neutral.
+_TYPOGRAPHIC = str.maketrans({
+    "‘": "'", "’": "'", "‚": "'",
+    "“": '"', "”": '"', "„": '"',
+    "–": "-", "—": "-", "−": "-",
+    " ": " ",
+})
+
+# " ... " between two passages: the model quoting two places at once.
+_ELLIPSIS_SPLIT = re.compile(r"\s*(?:\.\s*){2,}\s*")
+MIN_FRAGMENT_CHARS = 25
+
+
 def _normalize_for_match(s: str) -> str:
     """Normalize both sides of the citation substring check.
 
@@ -70,8 +84,37 @@ def _normalize_for_match(s: str) -> str:
     so this cannot turn an invented citation into a match -- it only stops
     fabrication_count from counting real quotes.
     """
-    s = _normalize_ws(s).lower()
+    s = _normalize_ws(s.translate(_TYPOGRAPHIC)).lower()
     return re.sub(r"(\w)-\s+(\w)", r"\1-\2", s)
+
+
+def _citation_found(cited_text: str, filing_text_norm: str) -> tuple[bool, bool]:
+    """Returns (found, was_joined).
+
+    A citation may quote two non-contiguous passages joined by an ellipsis --
+    legitimate practice when one passage does not cover the whole claim. Each
+    fragment is then required to appear verbatim on its own, so this is
+    stricter than a single substring test, not looser: nothing invented can
+    match. `was_joined` is surfaced to the grader, who still has to judge
+    whether assembling the pieces genuinely supports the claim.
+    """
+    if not cited_text:
+        return False, False
+
+    fragments = [f for f in _ELLIPSIS_SPLIT.split(cited_text) if f.strip()]
+    joined = len(fragments) > 1
+    if not joined:
+        return _normalize_for_match(cited_text) in filing_text_norm, False
+
+    for frag in fragments:
+        norm = _normalize_for_match(frag)
+        # Ignore stray short fragments (a trailing "Inc." etc.); requiring them
+        # would fail an otherwise sound citation, and they carry no evidence.
+        if len(norm) < MIN_FRAGMENT_CHARS:
+            continue
+        if norm not in filing_text_norm:
+            return False, True
+    return True, True
 
 
 def _filing_text_cache(filings: list[dict]) -> dict[str, str]:
@@ -122,16 +165,35 @@ def emit(run_dir: Path) -> Path:
             })
             continue
 
+        if not claims:
+            # The model returned no claims at all -- a legitimate answer when
+            # the prompt allows returning fewer than N ("the filing does not
+            # support anything here"). Record it, or the case would vanish from
+            # the worksheet with no trace of why the count dropped.
+            rows.append({
+                "filing": fid, "field": field_id, "claim_index": 0,
+                "claim_text": "", "cited_text": "",
+                "citation_found_in_filing": False,
+                "claim_supported_by_citation": "", "material": "",
+                "notes": "model returned no claims for this field",
+            })
+            continue
+
         filing_text_norm = _normalize_for_match(texts.get(fid, ""))
         for i, claim in enumerate(claims):
             claim_text = claim.get("claim", "") if isinstance(claim, dict) else ""
             cited_text = claim.get("citation", "") if isinstance(claim, dict) else ""
-            found = bool(cited_text) and _normalize_for_match(cited_text) in filing_text_norm
+            found, joined = _citation_found(cited_text, filing_text_norm)
             rows.append({
                 "filing": fid, "field": field_id, "claim_index": i,
                 "claim_text": claim_text, "cited_text": cited_text,
                 "citation_found_in_filing": found,
-                "claim_supported_by_citation": "", "material": "", "notes": "",
+                "claim_supported_by_citation": "", "material": "",
+                "notes": (
+                    "AUTO: citation joins non-contiguous passages; each fragment "
+                    "verified separately -- judge whether combining them supports the claim"
+                    if joined else ""
+                ),
             })
 
     df = pd.DataFrame(rows, columns=WORKSHEET_COLUMNS)

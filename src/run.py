@@ -33,7 +33,12 @@ from src.load import chunk_text, load_filing
 
 MAX_CONCURRENCY = 3
 MAX_RETRIES = 5
-MAX_TOKENS_OUT = 2048
+# max_tokens caps thinking AND answer text together, and current models run
+# adaptive thinking by default. At 2048 two analysis_v2 responses spent the
+# whole budget on thinking and returned truncated or empty text. Keep this
+# well above the largest expected answer (analysis responses run ~600-1500
+# tokens of JSON); 16000 stays under the SDK's non-streaming timeout guard.
+MAX_TOKENS_OUT = 16000
 # Chunking is a safety valve, not the common path -- a 10-K's full text
 # normally fits comfortably in one call. See load.chunk_text.
 DEFAULT_MAX_TOKENS_PER_CHUNK = 150_000
@@ -73,8 +78,14 @@ def build_analysis_prompt(template: str, field: dict, filing_text: str) -> str:
     )
 
 
-def call_model(client: anthropic.Anthropic, model: str, prompt: str) -> tuple[str, int, int, float]:
-    """Returns (raw_text, input_tokens, output_tokens, latency_seconds)."""
+def call_model(
+    client: anthropic.Anthropic, model: str, prompt: str
+) -> tuple[str, int, int, float, str | None]:
+    """Returns (raw_text, input_tokens, output_tokens, latency_seconds, stop_reason).
+
+    stop_reason is recorded so a truncated answer is self-evident in
+    raw_outputs.jsonl -- "max_tokens" means the response was cut off, not that
+    the model failed."""
     start = time.perf_counter()
     delay = 1.0
     last_error: Exception | None = None
@@ -90,7 +101,13 @@ def call_model(client: anthropic.Anthropic, model: str, prompt: str) -> tuple[st
             text = "".join(
                 block.text for block in response.content if getattr(block, "type", None) == "text"
             )
-            return text, response.usage.input_tokens, response.usage.output_tokens, latency
+            return (
+                text,
+                response.usage.input_tokens,
+                response.usage.output_tokens,
+                latency,
+                response.stop_reason,
+            )
         except (anthropic.RateLimitError, anthropic.APIStatusError, anthropic.APIConnectionError) as exc:
             last_error = exc
             if attempt == MAX_RETRIES - 1:
@@ -168,21 +185,30 @@ def run_one_case(
             raw_text = cached_entry["raw_response"]
             input_tokens = cached_entry["input_tokens"]
             output_tokens = cached_entry["output_tokens"]
+            stop_reason = cached_entry.get("stop_reason")
             latency = 0.0
             cached = True
         else:
-            raw_text, input_tokens, output_tokens, latency = call_model(client, model, prompt)
+            raw_text, input_tokens, output_tokens, latency, stop_reason = call_model(
+                client, model, prompt
+            )
+            cached = False
+
+        parsed_value, parse_status = parse_response(raw_text)
+
+        # Only cache a response we could actually parse. A truncated answer is
+        # an infrastructure artifact, not a model verdict -- caching it would
+        # bake the failure in permanently and no re-run could ever recover it.
+        if not cached and parse_status == "OK":
             cache.set(
                 key,
                 {
                     "raw_response": raw_text,
                     "input_tokens": input_tokens,
                     "output_tokens": output_tokens,
+                    "stop_reason": stop_reason,
                 },
             )
-            cached = False
-
-        parsed_value, parse_status = parse_response(raw_text)
 
         records.append(
             {
@@ -199,6 +225,7 @@ def run_one_case(
                 "latency_seconds": round(latency, 3),
                 "input_tokens": input_tokens,
                 "output_tokens": output_tokens,
+                "stop_reason": stop_reason,
                 "cached": cached,
                 "timestamp": datetime.now(timezone.utc).isoformat(),
             }

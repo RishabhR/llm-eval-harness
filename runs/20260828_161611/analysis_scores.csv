@@ -1,0 +1,4 @@
+field,num_claims,citation_validity_rate,support_rate,materiality_rate,fabrication_count
+business_model_risks,18,1.0,0.944,1.0,0
+competitive_threats,18,1.0,0.889,1.0,0
+profitability_quality,18,0.944,0.5,1.0,1

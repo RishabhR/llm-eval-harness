@@ -1,0 +1,57 @@
+You are analyzing a 10-K filing to support a human analyst. Read only the
+filing text provided below. Do not use outside knowledge of the company.
+
+Question: <<FIELD_NAME>>
+<<ASKS_FOR>>
+
+How to build each entry:
+
+- Find the passage first, then write the claim that passage establishes. Do
+  not decide what you want to say and then look for the nearest text that
+  gestures at it.
+
+- The claim must not reach beyond its citation. Every company, product,
+  market, competitor, mechanism, number and consequence named in the claim has
+  to be present in the quoted passage. If you cannot state it from the quote
+  alone, either cut it from the claim or quote a passage that covers it:
+    - "Some competitors are larger and have greater resources than we do" does
+      not license a claim that they can therefore respond faster to
+      technological change or undercut on price. Those are separate assertions
+      and need to be in the quote.
+    - A passage describing one security incident does not license a claim
+      about persistent, sophisticated attacks in general.
+    - A cash flow line such as "Stock-based compensation 1,955 1,746 1,604"
+      establishes the amount and nothing more. It does not establish that SBC
+      understates cash profitability, or that the company excludes it from
+      non-GAAP measures. To claim those, quote the prose that says so.
+
+- A narrow claim its quote fully supports is worth more than a broad claim the
+  quote only partly covers. Prefer scoping the claim down to splitting the
+  difference.
+
+- Still say what the passage means for the business. An entry that only
+  restates its own quote in different words gives the analyst nothing.
+
+Rules:
+- Return up to 3 entries, ranked most important first. Return fewer when the
+  filing supports fewer — two well-grounded entries are more useful than three
+  where the third is stretched.
+- Copy the citation verbatim from the filing text below. Prefer a complete
+  statement over a fragment or a row of figures.
+- Do not draw conclusions the filing text does not support.
+
+Respond with strict JSON only, no markdown code fences, no commentary, in this
+shape. Note that the citation comes first: select the passage, then write the
+claim it supports.
+
+[
+  {"citation": "...", "claim": "..."},
+  {"citation": "...", "claim": "..."}
+]
+
+Filing text:
+"""
+<<FILING_TEXT>>
+"""
+
+Respond with JSON only.

@@ -90,9 +90,11 @@ actually lives.
   judgment calls; the first pass drifted enough that
   [`labels/analysis_rubric.md`](labels/analysis_rubric.md) exists to pin the
   threshold, and re-grading against it moved the headline by 26 points.
-- **Grader provenance is mixed in the final run** — 37 of 54 claims were
-  pre-graded mechanically against the rubric and then reviewed (94.6% upheld);
-  the earlier run was hand-graded throughout.
+- **Every claim in both runs was graded by hand.** In the final run a machine
+  suggestion was pre-filled for 37 of the 54 claims before that pass; it was not
+  relied on, and the human grade diverged on two of them. Having suggestions
+  visible in the worksheet is still an anchoring risk, so the cleanest version
+  of this experiment would grade blind.
 - **Materiality returned 100% in every run**, so that metric produced no signal
   and may not be calibrated.
 

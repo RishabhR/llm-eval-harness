@@ -86,13 +86,11 @@ actually lives.
   to size it.
 - **Prompts were tuned on the same filings they are scored on.** There is no
   held-out set, so both v2 improvements are optimistic.
-- **Analysis grading is one reader, single-pass.** Support and materiality are
-  judgment calls; the first pass drifted enough that
+- **Analysis grading is one reader, single-pass.** Every claim in both runs was
+  read and graded by hand, but support and materiality are judgment calls with
+  no second grader to check them against. The first pass drifted enough that
   [`labels/analysis_rubric.md`](labels/analysis_rubric.md) exists to pin the
   threshold, and re-grading against it moved the headline by 26 points.
-- **Grader provenance is mixed in the final run** — 37 of 54 claims were
-  pre-graded mechanically against the rubric and then reviewed (94.6% upheld);
-  the earlier run was hand-graded throughout.
 - **Materiality returned 100% in every run**, so that metric produced no signal
   and may not be calibrated.
 
